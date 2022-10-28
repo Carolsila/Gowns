@@ -41,7 +41,13 @@ Totals=pd.read_csv("Total.csv")
 dff = Totals.melt(id_vars = 'Factors', value_vars=list(Totals.columns[1:]))
 dff.head(2)
 
+drapes=pd.read_csv("Drapes.csv")
+drapes
 
+d= drapes.melt(id_vars = ' Factors', value_vars=list(drapes.columns[1:]))
+d
+d.rename({'variable':'Drapes','value':'Value'},axis=1,inplace=True)
+d
 # In[477]:
 
 
@@ -96,8 +102,12 @@ def drawFigure1():
             dbc.CardBody([
                 dcc.Graph(
                     figure=px.bar(
-                        dff, x="Gowns", y="Values", color="Factors",title="Disposable,Reusable and Revolution-Zero Gowns")#color_discrete_sequence = ['#e6701d', '#3566c1', '#ffc61c', '#a7a6a7'])
+                        dff, x="Gowns", y="Values", color="Factors",title="Disposable,Reusable,Revolution-Zero Gowns",
+                        color_discrete_map={'CO2(KGs)': '#d62728', 'Energy(MJ)': '#ED9121', 'Water(KGs)': '#00FFF5',
+                                            'Waste(KGs)': '#834333'})
+                    #color_discrete_sequence = ['#e6701d', '#3566c1', '#ffc61c', '#a7a6a7'])
                         #color_discrete_map={'Detergents':'#d62728','Energy(MJ)':'#ED9121','Water(L)':'#00FFF5'})
+
                         
                     .update_layout(
                         template='plotly_dark',
@@ -118,7 +128,7 @@ def drawFigure2():
         dbc.Card( 
             dbc.CardBody([
                 dcc.Graph(
-                    figure=px.bar(df2,x="Masks",y="Values",color="Factors",title="Single Use Masks from China by Air and Sea, Turkey and Reusable Masks")
+                    figure=px.bar(df2,x="Masks",y="Values",color="Factors",title="Reusable and Single Use Masks")
                                   #color_discrete_map={'CO2(KGs)':'#d62728','Energy(MJ)':'#ED9121','Water(L)':'#00FFF5'})
                     .update_layout( 
                         template='plotly_dark',
@@ -146,7 +156,11 @@ def drawFigure3():
             dbc.CardBody([
                 dcc.Graph(
                     figure=px.bar(
-                        df5,x="Masks",y="Values",color="Factors",title="Single Use Masks from China by Air and Sea, Turkey and Reusable Masks ")
+                        df5,x="Masks",y="Values",color="Factors",title="Single Use and Reusable Masks  ",
+
+                        color_discrete_map={'CO2(KGs)': '#d62728', 'Energy(MJ)': '#ED9121', 'Water(KGs)': '#00FFF5',
+                                            'Land Use(PT)': '#834333'})
+
                         
                         #color_discrete_map={'CO2(KGs)':'#d62728','Energy(MJ)':'#ED9121','Water(L)':'#00FFF5'})
                     .update_layout( 
@@ -169,6 +183,32 @@ def drawFigure3():
     ])
 
 
+def drawFigure4():
+    return html.Div([
+        dbc.Card(
+            dbc.CardBody([
+                dcc.Graph(
+                    figure=px.bar(d, x=" Factors", y="Value", color=" Factors", title="Drapes and Tapes",
+                                  color_discrete_map={'CO2(KGs)': '#d62728', 'Energy(MJ)': '#ED9121',
+                                                      'Water(KGs)': '#00FFF5', ' Waste(KGs)': '#834333', })
+                        .update_layout(
+                        template='plotly_dark',
+                        plot_bgcolor='rgba(8, 73, 123, 2)',
+                        # paper_bgcolor= 'rgba(9, 74, 123, 1)',
+
+                    ),
+                    config={
+                        'displayModeBar': False
+
+                    }
+
+                )
+
+            ])
+        ),
+    ])
+
+
 
 #draw text1
 def drawText1():
@@ -177,7 +217,7 @@ def drawText1():
             dbc.CardBody([
                 html.Div([
                     html.H2("Key Environmental Impact from Gowns"),
-                ], style={'textAlign': 'center'}) 
+                ], style={'textAlign': 'left'})
             ])
         ),
     ])
@@ -190,7 +230,7 @@ def drawText2():
             dbc.CardBody([
                 html.Div([
                     html.H2("Other Environmental Impact from Masks"),
-                ], style={'textAlign': 'center','font':12}) 
+                ], style={'textAlign': 'left','font':12})
             ])
         ),
     ])
@@ -203,10 +243,24 @@ def drawText3():
                 html.Div([
                     html.H2("Key Environmental Impact from Masks"),
                     
-                ], style={'textAlign': 'center','font':12,})
+                ], style={'textAlign': 'left','font':12,})
             ])
         ),
     ])
+
+
+def drawText4():
+    return html.Div([
+        dbc.Card(
+            dbc.CardBody([
+                html.Div([
+                    html.H2("Environmental Impact of Drapes and Tapes"),
+
+                ], style={'textAlign': 'Left', 'font': 12, })
+            ])
+        ),
+    ])
+
 
 #app = JupyterDash(__name__)
 # Build App
@@ -223,7 +277,7 @@ colors={'background':'#000000','text':'#000000'}
 app.layout = html.Div(style={'backgroundColor':colors['background']},children=[
     
     html.Div([ 
-        html.H1(" Gowns / Masks Environmental Impact")
+        html.H1("Environmental Impact of Medical Textiles")
         
     ],style={'textAlign':'center','color':'#FFFFFF'}),
     
@@ -233,43 +287,60 @@ app.layout = html.Div(style={'backgroundColor':colors['background']},children=[
             dbc.Row([
                 dbc.Col([
                     drawText1()
-                ],xs=12,md=6, lg=6),
+                ],xs=12,md=12, lg=6),
                 dbc.Col([
                     drawText3()
-                ],xs=12,md=6, lg=6),
+                ],xs=12,md=8, lg=6),
                 
                 ],align='center'),            
             html.Br(),
             dbc.Row([
                 dbc.Col([
                     drawFigure1() 
-                ], xs=12,md=6, lg=6),
+                ], xs=12,md=8, lg=6),
                 
                 dbc.Col([
                     drawFigure3() 
-                ], xs=12,md=12, lg=6),
+                ], xs=12,md=8, lg=6),
                 
               ], align='center'),      
             html.Br(),
              dbc.Row([
                 dbc.Col([
                     drawText2() 
-                ], xs=12,md=6, lg=8),
+                ], xs=12,md=8, lg=6),
+                dbc.Col([
+                    drawText4()
+                ], xs=12,md=6, lg=6),
                 
               ], align='center'), 
             html.Br(),
-             dbc.Row([
+            dbc.Row([
                 dbc.Col([
-                    drawFigure2() 
-                ], xs=12,md=6, lg=8),
-                 dbc.Col([ 
+                    drawFigure2()
+                ], xs=12, md=6, lg=6),
+                dbc.Col([
+                    drawFigure4
+                    ()
+                ], xs=12, md=6, lg=6),
 
-                   html.Img(src = app.get_asset_url('logo.jpg'),style={'height':'100%','width':'100%'}),
-                    
-                ],style={'textAlign':'bottom'},xs=12,md=6, lg=4),
-                 ],align='center'),
-           
-      
+            ], align='center'),
+            html.Br(),
+
+            dbc.Row([
+
+                 dbc.Col([
+                        ''
+                    ], xs=12, md=6, lg=6),
+
+
+                dbc.Col([
+
+                    html.Img(src=app.get_asset_url('logo.jpg'), style={'height': '100%', 'width': '100%','textAlign': 'right'}),
+
+                ], style={'textAlign': 'right'}, xs=12, md=12, lg=6),
+            ], align='right'),
+
         ]), color = 'dark'
     )
 ])
